@@ -2,6 +2,7 @@
 
 var express = require('express');
 
+
 //converts json to object attach to request object
 var bodyParser = require('body-parser');
 
@@ -34,6 +35,18 @@ app.post('/todos', (req, res)=> {
   console.log(req.body);
 });
 
+app.get('/todos', (req, res) => {
+  Todo.find().then((todos) => {
+    //using the object allows greater flexibility because you can add more properties like custom status
+    //code. When you send an array back it has a less flexible future.
+    res.send({todos});
+  }, (e) => {
+    res.status(400).send(e);
+  })
+});
+
 app.listen(3000, ()=> {
   console.log('Started on port 3000');
 });
+
+module.exports = {app};
