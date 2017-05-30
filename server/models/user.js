@@ -17,16 +17,16 @@ var user =mongoose.model('User', {
   }
 });
 
-var newUser = new user({
-  name: 'Chris',
-  email: '          www.victobiz'
-});
-
-newUser.save().then((doc)=>{
-  console.log(doc);
-}, (e) => {
-  console.log('no worky');
-});
+// var newUser = new user({
+//   name: 'Chris',
+//   email: '          www.victobiz'
+// });
+//
+// newUser.save().then((doc)=>{
+//   console.log(doc);
+// }, (e) => {
+//   console.log('no worky');
+// });
 
 
 module.exports = {user};
