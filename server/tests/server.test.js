@@ -1,13 +1,17 @@
 //mocha does not need to be required
 const expect = require('expect');
 const request = require('supertest');
+const{ObjectID}= require ('mongodb');
 
 const {app} = require('./../server3');
 const {Todo} = require('./../models/todo');
 
 const todos = [{
+  //call from mongodb
+  _id: new ObjectID(),
   text: 'First test todo'
 }, {
+  _id: new ObjectID(),
   text: 'Second test todo'
 }];
 
@@ -89,4 +93,35 @@ describe('GET /todos', () => {
     })
     .end(done);
   });
+});
+
+describe('GET /todos/:id', () => {
+  it('should return todo doc', (done) => {
+    request(app)
+    .get(`/todos/${todos[0]._id.toHexString()}`)
+    .expect(200)
+    .expect((res) => {
+      expect(res.body.todo.text).toBe(todos[0].text);
+    })
+    .end(done);
+  });
+
+ it('should return a 404 if todo not found', (done) => {
+   var hexId = new ObjectID().toHexString();
+   request(app)
+   .get(`/todos/${hexId}`)
+   .expect(404)
+   .end(done);
+   //make a request using a realobject id and call its tohexstring method and new objectid to create a new one
+   //expectation setup is status code
+
+ });
+
+ it('should return 404 for non-object ids', (done)=>{
+   request(app)
+   .get('/todos/123abc')
+   .expect(404)
+   .end(done);
+ });
+  //pass in url /todos/123 expectation when get request is made a 404 status code is result
 });
