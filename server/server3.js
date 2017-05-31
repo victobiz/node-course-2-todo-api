@@ -5,7 +5,7 @@ var express = require('express');
 
 //converts json to object attach to request object
 var bodyParser = require('body-parser');
-
+var {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose.js');
 var {Todo} = require('./models/todo');
 var {User}= require('./models/user');
@@ -43,6 +43,33 @@ app.get('/todos', (req, res) => {
   }, (e) => {
     res.status(400).send(e);
   });
+});
+
+app.get('/todos/:id', (req, res)=>{
+  var id = req.params.id;
+
+  if(!ObjectID.isValid(id)){
+    return res.status(404).send(/*no value send back empty body*/);
+  }
+  Todo.findById(id).then((todo) =>{
+    if(!todo) {
+      return res.status(404).send();
+    }
+
+    res.send({todo});
+
+  }).catch((e) => {
+    res.status(400).send();
+  });
+
+  //res.send(req.params);
+  //validate id using isValid
+  //if not valid stop and respond with 404 and send back empty body so send with no value send()
+  //after query databse by findByID look for matching document 2 ways this could go success case and error case if error
+  //send back 400 and send empty body back
+  //for the sucees case in tod send back the todo if no todo call suceeded but id not exist send back a 404 with empty body
+
+
 });
 
 app.listen(3000, ()=> {
