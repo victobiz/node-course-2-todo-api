@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 
 //make a user model like name, age, password the only thing we set up here is email
 //require it - trim it -set type -set min length of 1
-
+var mongoose = require('mongoose');
 
 var user =mongoose.model('User', {
   name:{
