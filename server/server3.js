@@ -1,4 +1,4 @@
-//this connects to the db
+require('./config/config');
 
 const _= require('lodash');
 const express = require('express');
@@ -12,7 +12,9 @@ var {Todo} = require('./models/todo');
 var {User}= require('./models/user');
 
 var app = express();
-const port = process.env.PORT || 3000;
+
+//this no longer needs to be set to 3000 since we define it above
+const port = process.env.PORT;
 //takes middlewear
 //return value is a function that is the middlewear we need to give to express
 app.use(bodyParser.json());
