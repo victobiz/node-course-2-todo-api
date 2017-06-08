@@ -75,6 +75,34 @@ UserSchema.methods.generateAuthToken = function () {
 //   }]
 // }
 
+//statics method turns everything into a model as opposed to an instance method
+UserSchema.statics.findByToken = function (token) {
+
+  //instance methods get called with the individual document. model methods get called with the model as the .this binding user/User
+  var User = this;
+  var decoded;
+
+  //jwt.verify() throws an error if anything goes wrong so we use a try catch block
+
+  try{
+    decoded =jwt.verify(token, 'abc123');
+  }catch(e) {
+    // return new Promise((resolve, reject) => {
+    //
+    // });
+    return Promise.reject();
+  }
+  //if we are able to verify then return the following promise...
+
+  return User.findOne({
+    //need to return nested object properties
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+
+  });
+};
+
 
 var User =mongoose.model('User', UserSchema);
 
@@ -90,4 +118,4 @@ var User =mongoose.model('User', UserSchema);
 // });
 
 
-module.exports = {User}
+module.exports = {User};
