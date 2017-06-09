@@ -103,6 +103,8 @@ UserSchema.statics.findByToken = function (token) {
   });
 };
 
+
+//before every save in mongo db check to see if the user password is modified
 UserSchema.pre('save', function (next) {
   var user = this;
 

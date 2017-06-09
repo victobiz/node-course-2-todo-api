@@ -123,7 +123,7 @@ app.patch('/todos/:id', (req, res) => {
   })
 });
 
-app.post('/user', (req, res) => {
+app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);
 
