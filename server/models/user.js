@@ -125,7 +125,17 @@ UserSchema.statics.findByCredentials = function (email, password){
   });
 };
 
+UserSchema.methods.removeToken = function (token) {
+  //mongodb operator
+  var user = this;
 
+//if the token matches something it will be removed (the entire object not just the )
+  return user.update({
+    $pull: {
+      tokens: {token}
+    }
+  });
+};
 //before every save in mongo db check to see if the user password is modified
 UserSchema.pre('save', function (next) {
   var user = this;
@@ -143,6 +153,8 @@ bcrypt.genSalt(10, (err, salt) => {
   next();
 }
 });
+
+
 
 var User =mongoose.model('User', UserSchema);
 
