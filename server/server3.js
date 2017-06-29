@@ -25,10 +25,12 @@ app.use(bodyParser.json());
 //server will create text property and send back to client
 
 //for creating new todo
-app.post('/todos', (req, res)=> {
+app.post('/todos', authenticate, (req, res)=> {
   //the body gets stored by bodyparser.
   var todo = new Todo({
-    text: req.body.text
+    text: req.body.text,
+    _creator:req.user._id
+
   });
    todo.save().then((doc) => {
 
@@ -40,8 +42,10 @@ app.post('/todos', (req, res)=> {
   console.log(req.body);
 });
 
-app.get('/todos', (req, res) => {
-  Todo.find().then((todos) => {
+app.get('/todos', authenticate, (req, res) => {
+  Todo.find({
+    _creator: req.user._id
+  }).then((todos) => {
     //using the object allows greater flexibility because you can add more properties like custom status
     //code. When you send an array back it has a less flexible future.
     res.send({todos});
@@ -50,13 +54,17 @@ app.get('/todos', (req, res) => {
   });
 });
 
-app.get('/todos/:id', (req, res)=>{
+app.get('/todos/:id', authenticate, (req, res)=>{
+//id gets todo id and creater gets user id.
   var id = req.params.id;
 
   if(!ObjectID.isValid(id)){
     return res.status(404).send(/*no value send back empty body*/);
   }
-  Todo.findById(id).then((todo) =>{
+  Todo.findOne({
+    _id: id,
+    _creator: req.user._id
+  }).then((todo) =>{
     if(!todo) {
       return res.status(404).send();
     }
@@ -77,15 +85,18 @@ app.get('/todos/:id', (req, res)=>{
 
 });
 
-app.delete('/todos/:id', (req, res) => {
+app.delete('/todos/:id', authenticate, (req, res) => {
 //get the id
 var id = req.params.id;
 //validate the id if not valid return 404
 if(!ObjectID.isValid(id)){
   return res.status(404).send();
 }
-
-Todo.findByIdAndRemove(id).then((todo)=>{
+//Todo.findByIdAndRemove(id).then((todo)=>{ this changed because your lookin by multiple records
+Todo.findOneAndRemove({
+_id: id,
+_creator: req.user._id
+}).then((todo)=>{
   if(!todo){
     return res.status(404).send();
   }
